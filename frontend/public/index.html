@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Connection Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Network Connection Visualizer</h1>
+            <img src="images/selector.png" alt="Selector Logo" class="logo">
+        </header>
+
+        <main>
+            <div class="connection-form">
+                <div class="input-group">
+                    <label for="ip">Target IP:</label>
+                    <input type="text" id="ip" placeholder="Enter IP address" value="127.0.0.1">
+                </div>
+                <div class="input-group">
+                    <label for="port">Port:</label>
+                    <input type="number" id="port" placeholder="Enter port number" value="8080">
+                </div>
+                <div class="button-group">
+                    <button id="tcpButton" class="primary">Start TCP Handshake</button>
+                    <button id="pingButton" class="secondary">ICMP Ping</button>
+                </div>
+            </div>
+
+            <div class="visualization">
+                <div class="network-diagram">
+                    <div class="node client">
+                        <div class="node-icon">💻</div>
+                        <div class="node-label">Client</div>
+                    </div>
+                    <div class="connection-line">
+                        <div class="packet syn hidden">SYN</div>
+                        <div class="packet syn-ack hidden">SYN-ACK</div>
+                        <div class="packet ack hidden">ACK</div>
+                        <div class="packet ping hidden">PING</div>
+                        <div class="packet pong hidden">PONG</div>
+                    </div>
+                    <div class="node server">
+                        <div class="node-icon">🖥️</div>
+                        <div class="node-label">Server</div>
+                    </div>
+                </div>
+                <div class="status-panel">
+                    <h3>Connection Status</h3>
+                    <div id="statusLog"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 

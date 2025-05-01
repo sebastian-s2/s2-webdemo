@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TCP Flow Visualization</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <style>
+        .container {
+            margin: 20px;
+            padding: 20px;
+            width: 80%;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .server-box, .client-box {
+            border: 2px solid #333;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        
+        .packet {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 5px;
+            left: 250px;
+            top: 50px;
+            display: none;
+            transition: left 2s;
+        }
+        
+        .arrow {
+            position: absolute;
+            top: 70px;
+            left: 220px;
+            width: 60%;
+            height: 2px;
+            background-color: #333;
+        }
+        
+        .arrow:after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #333;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        
+        .server-info, .client-info {
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="/images/selector.png" height="75" width="75">
+            <h1>TCP Flow Visualization</h1>
+        </div>
+        
+        <p>This page demonstrates a TCP SYN packet flow from client to server. Press the "Send SYN Packet" button to visualize the flow.</p>
+        
+        <div class="flow-diagram">
+            <div class="client-box">
+                <h3>Client</h3>
+                <p>Your Browser</p>
+                <div class="client-info">
+                    <p><b>Client IP:</b> <!--#echo var="REMOTE_ADDR"--></p>
+                </div>
+            </div>
+            
+            <div class="arrow"></div>
+            
+            <div class="packet" id="syn-packet">SYN</div>
+            
+            <div class="server-box">
+                <h3>Backend Server</h3>
+                <p>Target Application</p>
+                <div class="server-info">
+                    <p><b>Server IP:</b> <span id="backend-ip"><!--#echo var="SERVER_ADDR"--></span></p>
+                    <p><b>Server Port:</b> <span id="backend-port">80</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="send-btn">Send SYN Packet</button>
+        </div>
+        
+        <div style="margin-top: 40px;">
+            <h3>TCP SYN Packet Information:</h3>
+            <div id="packet-info" style="display: none;">
+                <pre>
+Transmission Control Protocol, Src Port: <span id="source-port">random</span>, Dst Port: <span id="dest-port">80</span>
+    Source Port: <span id="src-port-value">random</span>
+    Destination Port: <span id="dst-port-value">80</span>
+    Sequence Number: 0    (relative sequence number)
+    Sequence Number (raw): <span id="seq-number">3107870297</span>
+    [Next Sequence Number: 1    (relative sequence number)]
+    Acknowledgment Number: 0
+    Header Length: 20 bytes
+    Flags: 0x002 (SYN)
+        000. .... .... = Reserved: Not set
+        ...0 .... .... = Nonce: Not set
+        .... 0... .... = Congestion Window Reduced (CWR): Not set
+        .... .0.. .... = ECN-Echo: Not set
+        .... ..0. .... = Urgent: Not set
+        .... ...0 .... = Acknowledgment: Not set
+        .... .... 0... = Push: Not set
+        .... .... .0.. = Reset: Not set
+        .... .... ..1. = Syn: Set
+        .... .... ...0 = Fin: Not set
+    Window: 65535
+    Checksum: 0x<span id="checksum">fa82</span>
+    [Calculated Checksum: 0x<span id="calc-checksum">fa82</span>]
+    Urgent Pointer: 0
+                </pre>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="/backend.shtml">View Backend Page</a> | 
+            <a href="/index.shtml">Return to Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('send-btn').addEventListener('click', function() {
+            // Show the packet
+            const packet = document.getElementById('syn-packet');
+            packet.style.display = 'block';
+            
+            // Generate random source port
+            const sourcePort = Math.floor(Math.random() * (65535 - 1024) + 1024);
+            
+            // Generate random sequence number
+            const seqNumber = Math.floor(Math.random() * 4294967295);
+            
+            // Generate random checksum
+            const checksum = Math.floor(Math.random() * 65535).toString(16).padStart(4, '0');
+            
+            // Update packet info
+            document.getElementById('packet-info').style.display = 'block';
+            document.getElementById('source-port').textContent = sourcePort;
+            document.getElementById('src-port-value').textContent = sourcePort;
+            document.getElementById('seq-number').textContent = seqNumber;
+            document.getElementById('checksum').textContent = checksum;
+            document.getElementById('calc-checksum').textContent = checksum;
+            
+            // Animate packet
+            setTimeout(function() {
+                packet.style.left = '670px';
+                
+                // Reset after animation completes
+                setTimeout(function() {
+                    packet.style.display = 'none';
+                    packet.style.left = '250px';
+                }, 2100);
+            }, 100);
+        });
+    </script>
+</body>
+</html>

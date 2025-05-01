@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend/public:/app/frontend/public
+      - ./backend/src:/app/src
+    environment:
+      - PORT=8080
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 
